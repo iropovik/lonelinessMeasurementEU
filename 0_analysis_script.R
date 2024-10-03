@@ -419,26 +419,6 @@ djg_config <- cfa(model = djg_model_2F,
                   group = "country")
 (djgInvConfFit <- fitmeasures(djg_config, fit.measures = fitMeasuresSelection))
 
-#'### Metric invariance
-djg_metric <- cfa(model = djg_model_2F,
-                  data = data_djg,
-                  ordered = TRUE,
-                  estimator = "WLSMV",
-                  group = "country",
-                  group.equal = c("loadings"))
-(djgInvMetrFit <- fitmeasures(djg_metric, fit.measures = fitMeasuresSelection))
-(djg_sign_metric <- lavTestLRT(djg_config,djg_metric))
-
-#'### Scalar invariance
-djg_scalar <- cfa(model = djg_model_2F,
-                  data = data_djg,
-                  ordered = TRUE,
-                  estimator = "WLSMV",
-                  group = "country",
-                  group.equal = c("loadings", "intercepts"))
-(djgInvScalFit <- fitmeasures(djg_scalar, fit.measures = fitMeasuresSelection))
-(djg_sign_scalar <- lavTestLRT(djg_metric,djg_scalar))
-
 #recode the coutry names to codes
 data_djg[[1]] <- as.numeric(as.factor(data_djg[[1]]))
 
@@ -598,7 +578,7 @@ test_invariance_by_cluster <- function(grouping_var, cluster_countries, data, mo
   # Filter data to include only specified countries
   filtered_data <- data[data$country %in% cluster_countries, ]
   
-  safe_cfa <- function(model, data, grouping_var, group_equal=NULL) {
+  safe_cfa <- function(model, data, grouping_var, group_equal="") {
     tryCatch({
       cfa(model = model,
           data = data,
@@ -642,7 +622,6 @@ test_invariance_by_cluster <- function(grouping_var, cluster_countries, data, mo
 
 # Define clusters with names
 clusters <- list(
-  clusterA = djg_cluster_a,
   clusterB = djg_cluster_b,
   clusterC = djg_cluster_c
 )
